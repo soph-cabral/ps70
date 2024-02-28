@@ -45,6 +45,7 @@
     .container p{
         margin-top: 20px !important; 
     }
+
   </style>
    
    
@@ -104,7 +105,7 @@
    
    
         <div class="container">
-            <div class="row col">
+            <div class="row">
 
                 <h5>The printing file</h5>
 
@@ -124,35 +125,85 @@
             <p > Exploding each piece to be printed separately to be assembled. 
             </p>
         </div>
+
         
         <div class="container">
-            <div class="row col">
+            <div class="row">
                 <h5>File information</h5>
                 <div class="col-md-6">
                     <img class="img-fluid max-height" src="static/imgs/week5/3.png">
             </div>
-            
+            </div>
             <p> Above are the is the printing breakdown (Prusa Slicer was used).
             </p>
         </div>
 
 
         <div class="container">
-            <div class="row col d-flex align-items-stretch">
+            <div class="row">
 
                 <h5>The result: </h5>
 
                 <div class="col-md-6">
-                        <img class="img-fluid max-height" src="static/imgs/week4/4.jpg">
+                    <img class="img-fluid max-height" src="static/imgs/week5/1.gif">
                 </div>
-
                 <div class="col-md-6">
-                    <img class="img-fluid max-height" src="static/imgs/week4/6.jpg">
-            </div>
-
-            </div>
-            <p > Not what I envisioned...</p>
+                    <img class="img-fluid max-height" src="static/imgs/week5/6.jpg">
+                </div>
+        
+        <p > The final result was a set of gears that smoothly rolled past each other!</p>
         </div>
+
+
+        <div class="container">
+            <div class="row ">
+                
+            </div>
+               
+            <div class="col-md-6">
+        
+                    <div class="model-viewer-container mx-auto" id="viewer">
+                        <!-- For larger screens (computer) -->
+                        <div class="model-viewer model">
+                            <style>
+                                .model-viewer.model {
+                                    width: 600px;
+                                    height: 600px;
+                                    padding: 20px; /* Adjust the padding value according to your preference */
+                                }
+                    
+                                /* Media query for smaller screens (mobile) */
+                                @media only screen and (max-width: 600px) {
+                                    .model-viewer.model {
+                                        display: block; /* Show the photo on smaller screens */
+                                        width: 100%;
+                                        max-width: none;
+                                        max-height: none;
+                                        padding: 2px;
+                                    }
+                                }
+                            </style>
+                    
+                            <model-viewer class="mod"
+                                style="width: 100%; height: 100%; max-width: none; max-height: none;/"
+                                src="static/models/Flower_Purple"
+                                ar ar-modes="scene-viewer webxr quick-look"
+                                shadow-intensity="7" exposure="0.8"
+                                camera-orbit="-1.2deg 90deg auto" environment-image="neutral" auto-rotate
+                                rotation-per-second="10deg">
+                                <!-- Navigation buttons or other content can be placed here -->
+                            </model-viewer>
+                        </div>
+                    </div>
+                
+                </div>
+            </div>   
+            <p > And for my 3D scan, I scaned a flower🌼</p>
+        </div>
+    </div>
+
+
+
 
 
 
@@ -165,6 +216,8 @@
 
 
 
+
+        <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.3.0/model-viewer.min.js"></script>    
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.3/js/bootstrap.bundle.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.8.2/js/lightbox.min.js"></script>
