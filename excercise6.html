@@ -17,6 +17,11 @@
     width: 100%; /* Ensure the image fills the entire container width */
     object-fit: cover; /* Cover the entire container while maintaining aspect ratio */
   }
+  .min-height {
+    min-height: 500px; /* Maximum height of container */
+    width: 100%; /* Ensure the image fills the entire container width */
+    object-fit: cover; /* Cover the entire container while maintaining aspect ratio */
+  }
   .scaled-down {
     max-width: 200px; /* Adjust the maximum width of the first image */
     width: 100%; /* Ensure the image fills the entire container width */
@@ -140,7 +145,7 @@
         <div class="container">
             <div class="row col">
 
-                <h5>The circuit</h5>
+                <h5>The circuit:</h5>
 
                 <div class="col-md-6">
                         <img class="img-fluid" src="static/imgs/week6/SKETCH_schem.png">
@@ -151,7 +156,7 @@
                     1 Arduino Uno Microcontroller
                 </ul>
                 <ul>
-                    1 L298N Driver
+                    1 L293D Motor Driver
                 </ul>
                 <ul>
                     1 DC motor
@@ -161,13 +166,19 @@
                 </ul>
                 <ul>
                     Wires
+                </ul>
+                <ul>
+                    1 10 MOhlm resistor
+                </ul>
+                <ul>
+                    1 Photoresistor
                 </ul>    
                 </p>
         </div>
         
         <div class="container">
             <div class="row col">
-                <h5>Not what I expected</h5>
+                <h5>Light-Driven Motor</h5>
                 <div class="col-md-6">
                     <img class="img-fluid max-height" src="static/imgs/week6/IMG_9205.jpg">
             </div>
@@ -176,9 +187,8 @@
                 <img class="img-fluid max-height" src="static/imgs/week6/1.gif">
             </div>              
             </div>
-            <p> I was hoping that by controling the speed without loops and in a controlled way would allow for slower drawing patterns, allowing a full circle to be draw
-                and allowing me to move the paper around for a continous flow (since the speed would be slower and I would be able to predict the movements of the motor). 
-                However, because of the pressure applied to the pencil and the unleveled surface, only one part of the circle would be continously drawn. 
+            <p> By controlling the light sensed by the photoresistor, I am able to control whether the DC motor turns on or not. By blocking the light 
+                I am able to initate the motor. To take this further I could control speed and direction of the motor based on different light exposures.
             </p>
         </div>
 
@@ -186,18 +196,59 @@
         <div class="container">
             <div class="row col d-flex align-items-stretch">
 
-                <h5>The unimpressive result: </h5>
+                <h5>Making my own capacitive sensor:</h5>
 
                 <div class="col-md-6">
-                        <img class="img-fluid max-height" src="static/imgs/week4/4.jpg">
+                        <img class="max-height" src="static/imgs/week6/IMG_9215.jpg">
                 </div>
-
+                
                 <div class="col-md-6">
-                    <img class="img-fluid max-height" src="static/imgs/week4/6.jpg">
+                    <img class="max-height" src="static/imgs/week6/IMG_9209.jpg">
             </div>
 
+
             </div>
-            <p > Not what I envisioned...</p>
+            <p > I decided to make a keyboard. I downloaded two libraries to make this possible, the Capacitive Sensor library and Pitch library. Below is the code:
+                <xmp>
+
+                #include <CapacitiveSensor.h>
+
+                 #include <pitches.h>
+
+                #define COMMON_PIN 2
+                #define BUZZER_PIN A4
+                #define NUM_OF_SAMPLES 10
+                #define CAP_THRESHOLD 150
+                #define NUM_OF_KEYS 8
+
+                #define CS(Y) CapacitiveSensor(2, Y)
+
+                int notes[] = {NOTE_C4, NOTE_D4, NOTE_E4, NOTE_F4, NOTE_G4, NOTE_A4, NOTE_B4, NOTE_C5};
+                CapacitiveSensor keys[] = {CS(3), CS(4), CS(5), CS(6), CS(7)};
+
+                void setup() {
+                // Turn off autocalibrate on all channels:
+                for (int i = 0; i < 4; ++i) {
+                    keys[i].set_CS_AutocaL_Millis(0xFFFFFFFF);
+                }
+
+                // Set the buzzer as an output:
+                pinMode(BUZZER_PIN, OUTPUT);
+                }
+
+                void loop() {
+                // Loop through each key:
+                for (int i = 0; i < 4; ++i) {
+                    // If the capacitance reading is greater than the threshold, play a note:
+                    if (keys[i].capacitiveSensor(NUM_OF_SAMPLES) > CAP_THRESHOLD) {
+                    tone(BUZZER_PIN, notes[i]);
+                    delay(200); // Adjust the delay as needed
+                    noTone(BUZZER_PIN); // Stop the tone
+                    }
+                }
+                }
+                </xmp>
+            </p>
         </div>
 
 
@@ -205,31 +256,15 @@
         <div class="container">
             <div class="row col d-flex align-items-stretch">
 
-                <h5>Moving forward: </h5>
-
-                <div class="col-md-6">
-                        <img class="img-fluid max-height" src="static/imgs/week4/gif/8gt7bs.gif">
-                </div>
-
-                <div class="col-md-6">
-                    <img class="img-fluid max-height" src="static/imgs/week4/5.jpg">
-            
-                </div>
+                <h5>It works! </h5>
+                
+                <video width="640" height="600" controls autoplay>
+                    <source src="static/imgs/week6/1.mp4" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>  
                 
                 </div>
-                <p >  
-                <ul>
-                    1. Assembly of the parts needs work to make sure all is leveled (even slight deviations will cause inbalance in the drawing).
-                </ul>
-                <ul>
-                    2. Use a hand-held controler (such as joy-stick) to avoid hardcoding movements.
-                </ul>
-                <ul>
-                    3. Maybe have multiple pencil insertions (experimentation with colors?)
-                </ul>
-                <ul>
-                    4. Consider a hand-held option?
-                </ul>
+                <p > 
                 </p>
             </div>
 
