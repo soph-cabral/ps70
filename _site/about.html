@@ -1,74 +1,102 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<title>PS70: Intro to Digital Fabrication </title>
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css" rel="stylesheet">
-<link href="./style.css" rel="stylesheet">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="initial-scale=1, width=device-width">
+  <link rel="icon" type="image/png" href="static/imgs/favicon.png">
+
+  <!-- Correct relative paths to stylesheets -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous"> 
+  <link href="static/styles.scss" rel="stylesheet">
+   <link href="/static/skeleton/normalize.css" rel="stylesheet">
+   <link href="/static/skeleton/skeleton.css" rel="stylesheet">
+   
+   
 
 
-<nav class="navbar navbar-expand-sm navbar-dark" style="background-color: #130F1D; color: #EEE7E8;">
-  <div style="align-items: center; justify-content: center;" class="container-fluid">
-    <div class="flexrow">
-      <h2 class="nav-title">PS70 // Intro to Digital Fabrication // F23</h2>
-    </div>
-    <div class="navbar-nav">
-      <h4><a class="nav-link" href="./index.html">Home</a></h4>
-      <h4><a class="nav-link" href="./about.html">About</a></h4>
-    </div>
-  </div>
-</nav>
+  <title>ps70</title>
+
+</head>
 
 <body>
-<xmp style="display:none;">
-<div class="textcontainer">
+
+  <nav class="navbar navbar-light">
+    <div class="container-fluid">
+        <!-- Brand with image in a small box -->
+        <div class="navbar-brand-box">
+            <a href="index.html"><img class="navbar-brand-img" src="static/imgs/logo3.png" alt="Brand Image"></a>
+        </div
+
+        <!-- Navigation links directly in the navbar -->
+        <ul class="navbar-nav ms-auto mt-2 d-flex flex-row">
+            <li class="nav-item me-5"><a class="nav-link" href="/about.html">Sophia Cabral</a></li>
+        </ul>
+    </div>
+</nav>
+
+<style>
+      .me {
+      max-width: 100%;
+      width: 100%;
+      height: 300px;
+      object-fit: cover;
+      display: block;
+      margin-bottom: 10px;
+      margin-top: 10px;
+    }
+
+</style>
+
+<img src="static/imgs/me.jpg" alt="me" class="me" >
+
+<div class="container">
+
+  
+
+  <!-- columns should be the immediate child of a .row -->
+  <div class="row">
+      <div class="four columns">
+          <h3>SOPHIA CABRAL</h3>
+      </div>
+      
+      <div class="eight columns">
+          <p>I grew up in the northern part of Brazil on the edge of the Amazon, surrounded by nature in the city of Belém. I am passionate about making cities a place where every species can feel part of the landscape and enjoy it equally. 
+
+              Currently, I am captivated by the concept of "urban habitats" — pockets of space that foster diverse ecological interactions, ultimately enhancing the lives of all species within a city (not just humans). </p>
+      </div>
+  </div>
 
 
+  
+  <div class="row">
+    <ul>
+      <div class="twelve columns">
+          <h5>Final Project ideas:</h5>
+      </div>
+    </ul>
+    <ul>
+      <div class="twelve columns">
+          <h6>Custom <a href="https://www.zdnet.com/article/this-device-recycles-plastic-water-bottles-into-3d-printing-filament-and-its-open-source/">3d printer filament maker</a>.</h6>
+      </div>
+    </ul>
 
-<h3>About Me</h3>
+    <ul>
+    <div class="twelve columns">
+        <h6>Custom <a href="http://www.keep-art.co.uk/Self_build.html">clay extruder</a>.</h6>
+    </div>
+  </ul>
+  <ul>
+    <div class="twelve columns">
+      <h6>Computer Vision <a href="static/imgs/IMG_8693.jpg">material composition calculator</a>.</h6>  
+  </div>
 
-<p class="margin">   </p>
-<div class="center-row">
-  <img src="./clarissa-sm.jpg" alt="photo of Clarissa, a smiling white person with wavy blond hair">
-  <p id="aboutme">
-    Hey there! I'm Clarissa, a senior in Leverett studying Linguistics
-    with a bit of Computer Science. This is my website where I document
-    my work for PHYSCI 70: Intro to Digital Fabrication.
-  </p>
+  </ul>
+
+  
 </div>
 
-<p class="margin">   </p>
-I took GENED 1080 in the fall of 2021 and had a great time learning
-about 3D printing, laser cutting, and basic electronics. For my final
-project in that course, I made this lyre:
-
-<p class="margin">   </p>
-<div class="flexrow">
-  <img src="./harp-front.jpeg" alt="the front of a small wooden lyre" width=25%>
-  <img src="./harp-back.jpeg" alt="the back of a the same lyre" width=25%>
 </div>
 
-<p class="caption">(It's about 2 feet tall, for reference.)</p>
-
-<p class="margin"></p>
-I also spend a lot of time outside of class working backstage on
-theatrical shows. Specifically, I design, program, and operate the
-lighting. Through stage lighting, I've learned about 2D drafting with
-CAD software and gotten pretty good at ETC console programming.
-
-<p class="margin">   </p>
-<div class="flexrow">
-  <img src="./hbc.jpg" alt="photo of a dancer jumping on a stage, lit with various colors of light." width=35%>
-</div>
-<p class="caption">This is a photo of a ballet show I lit in the spring of 2022.</p>
-
-<p class="margin"></p>
-Head on over to my page on [Week 1](./01_intro/index.html) to check out my ideas for my final project!
-
-</div>
-</xmp>
-</body>
-
-<script src="./strapdown.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" ></script>
 
 </html>
