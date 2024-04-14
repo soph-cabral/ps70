@@ -1,0 +1,40 @@
+<!doctype html>
+<html>
+    <head>
+        
+        <script src='https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.4/socket.io.js'></script>
+        
+        <style>
+        
+            #sample {
+                background-color: red;
+                width: 300px;
+                height: 300px;
+            }
+        
+        </style>
+        
+    </head>
+    <body>
+        
+        <h1>Communicating from an Arduino to Node.js</h1>
+
+        
+        <div id="brightness">Brightness Level: <span id="brightnessValue"></span></div>
+
+        <script>
+    
+            var socket = io();
+    
+            socket.on('brightness', function(brightnessLevel) {
+                console.log('Brightness level received: ' + brightnessLevel);
+    
+                // Update the brightness level displayed in the HTML
+                document.getElementById('brightnessValue').innerText = brightnessLevel;
+            });
+    
+        </script>
+        
+    </body>
+</html>
+ 
