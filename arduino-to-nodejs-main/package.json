@@ -3,7 +3,11 @@
     "version": "0.0.1",
     "description": "Communication between Arduino and HTML/JavaScript",
     "dependencies": {
-        "socket.io": "^2.0.4",
-        "serialport": "^9.0.1"
+      "http": "^0.0.1-security",
+      "serialport": "^9.2.8",
+      "socket.io": "^2.5.0"
+    },
+    "scripts": {
+      "start": "node your_entry_file.js"
     }
-}
+  }

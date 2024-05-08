@@ -9,12 +9,12 @@ const parser = new parsers.Readline({
     delimiter: '\r\n'
 });
 
-var port = new SerialPort('/dev/tty.wchusbserialfa1410',{ 
+var port = new SerialPort('COM6',{ 
     baudRate: 9600,
     dataBits: 8,
     parity: 'none',
     stopBits: 1,
-    flowControl: false
+    flowControl: 'none'
 });
 
 port.pipe(parser);
