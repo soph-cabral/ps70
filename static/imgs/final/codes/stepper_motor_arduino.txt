@@ -1,0 +1,216 @@
+#include "AccelStepper.h"
+
+#define X_STEP_PIN 6
+#define X_DIR_PIN 5
+#define Y_STEP_PIN 3
+#define Y_DIR_PIN 2
+#define Z_STEP_PIN 9
+#define Z_DIR_PIN 8
+#define x_home_switch 11
+#define y_home_switch 12
+#define z_home_switch 13
+
+// Define homing distances
+#define HOMING_DISTANCE_X 1000
+#define HOMING_DISTANCE_Y -1000
+#define HOMING_DISTANCE_Z 1000
+
+// Define initial homing positions
+long initial_homing_x = -1;
+long initial_homing_y = -1;
+long initial_homing_z = 1; // Set initial homing position for Z above maximum travel distance
+
+// Define microstepping settings
+const int X_MS3_PIN = 7; // Connect X MS3 pin to digital pin 7
+const int Y_MS3_PIN = 4; // Connect Y MS3 pin to digital pin 4
+const int Z_MS3_PIN = 10; // Connect Z MS3 pin to digital pin 10
+float microstepsPerRevolution = 3200; // Number of microsteps per revolution with 16x microstepping
+
+// Define step distances for each axis
+float stepDistanceX = 1.8 / 16; // Step distance in degrees for X axis (1.8° per full step divided by 16)
+float stepDistanceY = 1.8 / 16; // Step distance in degrees for Y axis (1.8° per full step divided by 16)
+float stepDistanceZ = 1.8 / 16; // Step distance in degrees for Z axis
+
+// Define initial step positions and step distances in mm/step
+int initialXSteps = 100; // Example initial X position in steps
+int initialYSteps = 800; // Example initial Y position in steps
+float stepDistanceXmm = 0.08; // Step distance for X axis in mm/step
+float stepDistanceYmm = 0.08; // Step distance for Y axis in mm/step
+float stepDistanceZmm = 0.08; // Step distance for Z axis in mm/step
+
+
+// Create AccelStepper objects for each axis
+AccelStepper stepperX(AccelStepper::DRIVER, X_STEP_PIN, X_DIR_PIN);
+AccelStepper stepperY(AccelStepper::DRIVER, Y_STEP_PIN, Y_DIR_PIN);
+AccelStepper stepperZ(AccelStepper::DRIVER, Z_STEP_PIN, Z_DIR_PIN);
+
+
+
+void setup() {
+  Serial.begin(460800);
+  
+  // Set up homing switches
+  pinMode(x_home_switch, INPUT_PULLUP);
+  pinMode(y_home_switch, INPUT_PULLUP);
+  pinMode(z_home_switch, INPUT_PULLUP);
+  
+  // Set up microstepping pins
+  pinMode(X_MS3_PIN, OUTPUT);
+  digitalWrite(X_MS3_PIN, HIGH); // Set MS3 pin high for microstepping (adjust as needed)
+  pinMode(Y_MS3_PIN, OUTPUT);
+  digitalWrite(Y_MS3_PIN, HIGH); // Set MS3 pin high for microstepping (adjust as needed)
+  pinMode(Z_MS3_PIN, OUTPUT);
+  digitalWrite(Z_MS3_PIN, HIGH); // Set MS3 pin high for microstepping (adjust as needed)
+
+  // Set up max speed and acceleration for X, Y, and Z axes
+  stepperX.setMaxSpeed(2000); // Adjust as needed for smooth movement
+  stepperX.setAcceleration(2000); // Adjust as needed for smooth movement
+  stepperY.setMaxSpeed(2000); // Adjust as needed for smooth movement
+  stepperY.setAcceleration(2000); // Adjust as needed for smooth movement
+  stepperZ.setMaxSpeed(2000); // Adjust as needed for smooth movement
+  stepperZ.setAcceleration(2000); // Adjust as needed for smooth movement
+  
+  // Homing sequence
+  // Serial.println("Homing X...");
+  moveZ();
+}
+
+void homingX() {
+
+  stepperX.setCurrentPosition(0);
+  initial_homing_x = stepDistanceX * 1; // Set initial homing position in microsteps
+  while (!digitalRead(x_home_switch)) {
+    stepperX.moveTo(initial_homing_x);
+    stepperX.run();
+    initial_homing_x -= microstepsPerRevolution; // Move one microstep at a time
+    
+  }
+
+  stepperX.setCurrentPosition(0);
+  stepperX.moveTo(0);
+  homingY();
+}
+
+void homingY() {
+
+
+  stepperY.setCurrentPosition(0);
+  initial_homing_y = stepDistanceY * 1; // Set initial homing position in microsteps
+  while (!digitalRead(y_home_switch)) {
+    stepperY.moveTo(initial_homing_y);
+    stepperY.run();
+    initial_homing_y -= microstepsPerRevolution; // Move one microstep at a time
+   
+  }
+
+  stepperY.setCurrentPosition(0);
+  move_to_initial_position(); // Call move_to_initial_position() after homing Y
+}
+
+void moveZ() {
+
+  while (!digitalRead(z_home_switch)) {
+    stepperZ.moveTo(initial_homing_z);
+    initial_homing_z -= microstepsPerRevolution; // Move one microstep at a time
+    stepperZ.run();
+    
+  }
+
+  stepperZ.setCurrentPosition(0);
+  stepperZ.moveTo(1000);
+  stepperZ.runToPosition();
+  homingX();
+}
+
+void homingZ() {
+
+  while (!digitalRead(z_home_switch)) {
+    stepperZ.moveTo(initial_homing_z);
+    initial_homing_z -= microstepsPerRevolution; // Move one microstep at a time
+    stepperZ.run();
+  
+  }
+
+  stepperZ.setCurrentPosition(0);
+  delay(100);
+  Serial.println("I am ready");
+  moveMotorsFromSerial();
+  
+}
+
+void move_to_initial_position() {
+
+  stepperX.moveTo(0); // Move 100 steps (adjust as needed)
+  stepperX.runToPosition();
+
+  stepperY.moveTo(0); // Move 100 steps (adjust as needed)
+  stepperY.runToPosition();
+
+  homingZ();
+}
+
+int currentRow = 1; // Initialize the current row number to 1
+
+void moveMotorsFromSerial() {
+  while (Serial.available() > 0) { // Check if there's serial data available
+    String data = Serial.readStringUntil('\n'); // Read a line from serial
+    
+    // Split the received string into X and Y coordinates
+    int commaIndex = data.indexOf(',');
+    if (commaIndex != -1) { // Check if the comma is found
+      String xStr = data.substring(0, commaIndex); // Extract X coordinate string
+      String yStr = data.substring(commaIndex + 1); // Extract Y coordinate string
+      
+      // Convert coordinate strings to integers
+      int targetXSteps = xStr.toInt();
+      int targetYSteps = yStr.toInt();
+      
+      // Move motors to the specified positions
+      stepperX.moveTo(max(0,targetXSteps));
+      stepperY.moveTo(max(0,targetYSteps));
+      
+      // Print the current row number and coordinates for debugging
+      Serial.print("Current Row: ");
+      Serial.println(currentRow);
+      Serial.print("X Steps: ");
+      Serial.println(targetXSteps);
+      Serial.print("Y Steps: ");
+      Serial.println(targetYSteps);
+      
+      // Increment the row number for the next iteration
+      currentRow++;
+    }
+  }
+}
+
+void resetToRow1() {
+  currentRow = 1; // Reset the current row number to 1
+}
+
+
+bool xyAtInitialPosition = false;
+
+void loop() {
+  // Run X, Y, and Z motors until they reach their target positions
+  while (stepperX.distanceToGo() != 0 || stepperY.distanceToGo() != 0 || stepperZ.distanceToGo() != 0) {
+    stepperX.run();
+    stepperY.run();
+    stepperZ.run();
+  }
+
+  // Check if X and Y are at their initial positions
+  if (!xyAtInitialPosition && stepperX.currentPosition() == 0 && stepperY.currentPosition() == 0) {
+    stepperX.setCurrentPosition(0);
+    stepperY.setCurrentPosition(0);
+    xyAtInitialPosition = true; // Set the flag to true once X and Y are at their initial positions
+    homingZ(); // Call homingZ() to bring Z down to 0
+    
+    
+  }
+
+
+
+  moveMotorsFromSerial();
+
+
+}

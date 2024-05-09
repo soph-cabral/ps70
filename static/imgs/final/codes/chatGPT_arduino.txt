@@ -1,0 +1,151 @@
+#include <WiFi.h>
+#include <HTTPClient.h>
+#include <ArduinoJson.h>
+#include <TimeLib.h> // Include the Time library
+
+
+
+const char* ssid = "";
+const char* password = "";
+const char* apiKey = "";
+
+String apiUrl = "";
+String finalPayload = "";
+
+String cachedResponse;
+unsigned long cacheExpiration = 0;
+
+bool initialPrompt = true;
+bool gettingResponse = true;
+
+HTTPClient http;
+
+const int touchSensorPin = 34; // Analog pin where the touch sensor is connected
+
+unsigned long lastCheckTime = 0;
+unsigned long lastMinuteTime = 0;
+unsigned long requestCountMinute = 0;
+unsigned long requestCountDay = 0;
+
+// Define thresholds for touch levels
+
+const int touchThreshold = 1920;
+
+
+bool touchFrequencyMet = false; // Variable to track if touch frequency threshold is met
+
+
+void setup() {
+  Serial.begin(115200);
+  Serial2.begin(115200, SERIAL_8N1, 23, 22);
+  WiFi.mode(WIFI_STA);
+  WiFi.begin(ssid, password);
+  Serial.println("Connecting to WiFi ..");
+  while (WiFi.status() != WL_CONNECTED) {
+    Serial.print('.');
+    delay(1000);
+  }
+  Serial.println("Connected");
+  http.begin(apiUrl);
+}
+
+void loop() {
+  unsigned long currentTime = millis(); // Get the current time in milliseconds
+
+  // Check if a minute has passed since the last check
+  if (currentTime - lastCheckTime >= 60000) { // 60000 milliseconds = 1 minute
+    // Reset request count for the new minute
+    requestCountMinute = 0;
+
+    int touchValue = analogRead(touchSensorPin); // Read the value from the light sensor
+
+    String touchLevel;
+    if (touchValue < touchThreshold) {
+      touchLevel = "You are The demon Curupira lives in the forest and uses its backward feet to create footprints that lead to its starting point, thus making hunters and travelers confused. Besides that, it can also create illusions and produce a sound that is like a high pitched whistle, in order to scare and drive its victim to madness. It is common to portray a Curupira riding a collared peccary, much like another Brazilian creature called Caipora. in 5-8 words, let me know that plants said my aura is bad and need to watch our for your illusions, make it rhyme. Be sassy";
+    } else {
+      touchLevel = "You are The demon Curupira lives in the forest and uses its backward feet to create footprints that lead to its starting point, thus making hunters and travelers confused. Besides that, it can also create illusions and produce a sound that is like a high pitched whistle, in order to scare and drive its victim to madness. It is common to portray a Curupira riding a collared peccary, much like another Brazilian creature called Caipora. in 5-8 words, let me know that plants said my aura is good and you won't create illusions, make it rhyme. Be sassy";
+    }
+
+    chatGptCall("It's " + touchLevel + ".");
+
+
+    lastCheckTime = currentTime; // Update the last check time
+  }
+
+  // Check if a second has passed since the last minute check
+  if (currentTime - lastMinuteTime >= 1000) { // 1000 milliseconds = 1 second
+    // Increment request count for the current minute
+    requestCountMinute++;
+    // Increment request count for the current day
+    requestCountDay++;
+
+    // Check if the request limit for the current minute is reached
+    if (requestCountMinute > 3) {
+      // Delay for the remaining time in the current minute
+      delay(30000 - (currentTime % 30000));
+      // Reset request count for the new minute
+      requestCountMinute = 0;
+    }
+
+    // Check if the request limit for the current day is reached
+    if (requestCountDay > 200) {
+      // Optionally, you can handle the situation when the daily limit is reached
+      // For example, you can stop making requests for the rest of the day or take other actions.
+    }
+
+    lastMinuteTime = currentTime; // Update the last minute check time
+  }
+}
+
+
+void chatGptCall(String payload) {
+  // Create a JSON payload
+  StaticJsonDocument<200> jsonPayload;
+  jsonPayload["model"] = "gpt-3.5-turbo";
+  JsonArray messages = jsonPayload.createNestedArray("messages");
+  JsonObject userMessage = messages.createNestedObject();
+  userMessage["role"] = "user";
+  userMessage["content"] = payload;
+
+  // Serialize the JSON payload
+  String jsonString;
+  serializeJson(jsonPayload, jsonString);
+
+  // Send the HTTP request
+  http.begin(apiUrl);
+  http.addHeader("Content-Type", "application/json");
+  http.addHeader("Authorization", "Bearer " + String(apiKey));
+  int httpResponseCode = http.POST(jsonString);
+
+  if (httpResponseCode == 200) {
+    String response = http.getString();
+    DynamicJsonDocument jsonDoc(1024);
+    deserializeJson(jsonDoc, response);
+    String outputText = jsonDoc["choices"][0]["message"]["content"];
+    outputText.remove(outputText.indexOf('\n'));
+    
+    // Get the current time
+    time_t now = time(nullptr);
+    struct tm *timeinfo;
+    timeinfo = localtime(&now);
+    
+    // Print the message to the serial monitor with the current time);
+
+    Serial.println(outputText);
+    
+    // Send the message to the thermal printer
+
+    Serial.println(outputText);
+
+    delay(100);
+  } else {
+    Serial.print("HTTP POST failed with error code: ");
+    Serial.println(httpResponseCode);
+  }
+
+  // End the HTTP connection
+  http.end();
+
+  // Delay to prevent spamming requests (adjust as needed)
+  delay(100);
+}
